@@ -1,0 +1,25 @@
+{
+  "name": "d-util",
+  "version": "1.0.0",
+  "description": "this is some util functions for discord.js",
+  "main": "main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ZelAk312/d-util.git"
+  },
+  "keywords": [
+    "discord.js"
+  ],
+  "engines": {
+    "node": ">=6.0.0"
+  },
+  "author": "ZelAk312",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ZelAk312/d-util/issues"
+  },
+  "homepage": "https://github.com/ZelAk312/d-util#readme"
+}
