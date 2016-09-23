@@ -21,5 +21,12 @@
   "bugs": {
     "url": "https://github.com/ZelAk312/d-util/issues"
   },
-  "homepage": "https://github.com/ZelAk312/d-util#readme"
+  "homepage": "https://github.com/ZelAk312/d-util#readme",
+  "dependencies": {
+    "discord.js": "^9.2.0",
+    "moment": "^2.15.1",
+    "simple-youtube-api": "^2.1.0",
+    "youtube-search": "^1.0.6",
+    "ytdl-core": "^0.7.18"
+  }
 }
