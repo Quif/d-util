@@ -12,8 +12,8 @@ to get the indev version: `npm i zelak312/d-util#indev`
 Setup:
 
 ```js
-var d-util = require('d-util');
-var music = new d-util.Music(bot, options);
+var dutil = require('d-util');
+var music = new dutil.Music(bot, options);
 ```
 if there is a * that means thats its obligatory
 
@@ -75,7 +75,7 @@ queue: is the guild queue that you can get with getQueue<br>
 song: is the name or the link of a youtube video<br>
 return a Promise
 ```js
-music.play(message, getQueue(guildId), "idiot test").then(function(anobject){
+music.play(message, music.getQueue(guildId), "idiot test").then(function(anobject){
   console.log('queued ' + anobject.queue.name);
 }).catch(console.log)
 ```
