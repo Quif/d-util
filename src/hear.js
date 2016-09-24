@@ -22,3 +22,5 @@ class Hearing extends EventEmitter {
         })
     }
 }
+
+module.exports = Hearing;
