@@ -67,7 +67,7 @@ class Musics extends EventEmitter {
         return this.dispatchers[guild].volume * 50;
     }
     //verified (connect to a channel) :<>:
-    connect(member, channel){
+    connect(channel){
         var $this = this;
         return new Promise(function(resolve, reject){
             if(!channel || typeof channel != "object") return reject("Missing channel object");
@@ -79,7 +79,7 @@ class Musics extends EventEmitter {
         });
     }
     //verified (leave a channel) :<>:
-    leave(member, channel){
+    leave(channel){
         var $this = this;
         return new Promise(function(resolve, reject){
             if(!channel || typeof channel != "object") return reject("Missing channel object");
