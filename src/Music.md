@@ -1,6 +1,6 @@
 # Musics
 
-so this is indev so if you find errors just make an issues that will really help me :)
+this is indev so if you find errors just make an issues that will really help me :)
 
 ## for discord.js 9.0.0^
 
