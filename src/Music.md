@@ -5,7 +5,7 @@ this is indev so if you find errors just make an issues that will really help me
 ## for discord.js 9.0.0^
 
 to install it (not in npm)
-to get the stable version: `npm i zelak312/d-util#master`
+to get the stable version: `npm i zelak312/d-util#master`<br>
 to get the indev version: `npm i zelak312/d-util#indev`
 
 ---
