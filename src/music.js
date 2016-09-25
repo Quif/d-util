@@ -37,6 +37,7 @@ class Musics extends EventEmitter {
         this.timesOut = {};
         this.dispatchers = {};
         this.skips = {};
+        this.skipAutori = {};
     }
     //verified (convert the time) :<>:
     getTime(time, other){
@@ -149,7 +150,8 @@ class Musics extends EventEmitter {
                 dispatcher.on('end', function(){
                     setTimeout(function(){
                         queue.shift();
-                        if($this.skips[msg.guild.id]) delete $this.skip[msg.guild.id];
+                        if($this.skips[msg.guild.id]) delete $this.skips[msg.guild.id];
+                        if($this.skipAutori[msg.guild.id]) delete $this.skipAutori[msg.guild.id];
                         $this.play(msg, queue);
                     }, $this.options.timeNewSong);
                 })
@@ -200,7 +202,10 @@ class Musics extends EventEmitter {
         if(typeof guild == 'object') guild = guild.id;
         if(!this.skips[guild]) this.skips[guild] = 0;
         if(!this.dispatchers[guild]) throw new Error('can\'t find dispatcher probably because the bot is not connected to a voicechannel');
-        var dispatcher = this.dispatchers[guild];
+        let dispatcher = this.dispatchers[guild];
+        if(!this.skipAutori[guild]) this.skipAutori[guild] = {};
+        if(this.skipAutori[guild][member.id]) return this.skips[guild];
+        this.skipAutori[guild][member.id] = true;
         this.skips[guild]++;
         if(this.skips[guild] == this.options.skipRequired || instanSkip){
             if(dispatcher){
