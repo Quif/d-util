@@ -150,7 +150,8 @@ class Musics extends EventEmitter {
                 dispatcher.on('end', function(){
                     setTimeout(function(){
                         queue.shift();
-                        if($this.skips[msg.guild.id]) delete $this.skip[msg.guild.id];
+                        if($this.skips[msg.guild.id]) delete $this.skips[msg.guild.id];
+                        if($this.skipAutori[msg.guild.id]) delete $this.skipAutori[msg.guild.id];
                         $this.play(msg, queue);
                     }, $this.options.timeNewSong);
                 })
