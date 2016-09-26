@@ -84,6 +84,10 @@ class Musics extends EventEmitter {
         var $this = this;
         return new Promise(function(resolve, reject){
             if(!channel || typeof channel != "object") return reject("Missing channel object");
+            let queue = $this.getQueue(channel.guild.id);
+            for(let i = queue.length - 1; i >= 0; i--){
+                queue.splice(i, 1);
+            };
             channel.leave();
             if($this.timesOut[channel.id]){
                 clearTimeout($this.timesOut[channel.id]);
@@ -155,12 +159,18 @@ class Musics extends EventEmitter {
                         $this.play(msg, queue);
                     }, $this.options.timeNewSong);
                 })
+                
+                dispatcher.on('error', function(err){
+                    msg.channel.sendMessage(err);
+                })
             }else{
                 //msg.channel.sendMessage("No more music in queue. If I have no request of music withen 5min I will leave the channel");
                 $this.emit('queueFinished', {'msg': msg});
                 if($this.options.autoLeave){
                 var time = setTimeout(function(){
+                    if($this.bot.voiceConnections.get(msg.guild.id)){
                    $this.bot.voiceConnections.get(msg.guild.id).channel.leave();
+                    }
                 }, $this.options.autoLeave);
                 $this.timesOut[msg.guild.id] = time;
                 }
@@ -199,6 +209,7 @@ class Musics extends EventEmitter {
     //verified (skip a song) :<>:
     skip(member, guild, instanSkip){
         if(!member || !guild) throw new Error('missing arguments ex: (member, guild)');
+        if(!member.voiceChannel) return;
         if(typeof guild == 'object') guild = guild.id;
         if(!this.skips[guild]) this.skips[guild] = 0;
         if(!this.dispatchers[guild]) throw new Error('can\'t find dispatcher probably because the bot is not connected to a voicechannel');
@@ -207,13 +218,23 @@ class Musics extends EventEmitter {
         if(this.skipAutori[guild][member.id]) return this.skips[guild];
         this.skipAutori[guild][member.id] = true;
         this.skips[guild]++;
+        if(this.options.skipRequired == 'auto'){
+            var users = member.voiceChannel.members.array().length - 1;
+            if(this.skips[guild] >= (users / 2) || instanSkip){
+            if(dispatcher){
+                dispatcher.end();
+            }
+            return {'skip': true};
+        }
+        }else{
         if(this.skips[guild] == this.options.skipRequired || instanSkip){
             if(dispatcher){
                 dispatcher.end();
             }
-            return true;
+            return {'skip': true};
         }
-        return this.skips[guild];
+        }
+        return {'skip': false, 'number': this.skips[guild], 'skipRequired': (this.options.skipRequired == 'auto') ? users / 2 : this.options.skipRequired};
     }
     //verifed (change the volume) :<>:
     changeVolume(guild, volume){
@@ -226,6 +247,5 @@ class Musics extends EventEmitter {
         return volume;
     }
 }
-
 
 module.exports = Musics;
