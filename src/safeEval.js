@@ -11,6 +11,7 @@ var SaveEval = function (){
             if(typeof lol == "object"){
                 lol = util.inspect(lol, {showHidden: false, depth: 1});
             }
+            lol = lol + " ";
             return "**No errors** :thumbsup: ```xl\nResult: " + (lol.length >= 2000 ? "the result is too big" : lol) + "```";
         }catch(err){
             if(!this.passed){
@@ -18,10 +19,9 @@ var SaveEval = function (){
                 return "**Found an error**```xl\n" + err + "```";
             }else{
                 this.passed = false;
-                return "**No errors** :thumbsup: (Im not looking to the variables but the syntax)";
+                return "**No errors** :thumbsup: (i'm not looking at the variables, i'm looking at the syntax errors.')";
             }
         }
     }
 }
-
 module.exports = SaveEval;
