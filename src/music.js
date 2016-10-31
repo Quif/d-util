@@ -73,3 +73,4 @@ class MusicClient extends EventEmitter {
         return channel.leave();
     }
 }
+module.exports = MusicClient;
