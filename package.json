@@ -1,6 +1,6 @@
 {
   "name": "d-util",
-  "version": "1.0.6",
+  "version": "2.0.0",
   "description": "this is some util functions for discord.js",
   "main": "main.js",
   "scripts": {
