@@ -161,12 +161,12 @@ class MusicClient extends EventEmitter {
             if(song){
                 this.addSong(queue, msg.author, song).then(queue => {
                     if(queue.length == 1){
-                        resolve(queue);
+                        resolve(queue[(queue.length - 1)]);
                         setTimeout(() => {
                             $this.play(msg, queue);
                         }, $this.options.timeNewSong);
                     }else{
-                        resolve(queue);
+                        resolve(queue[(queue.length - 1)]);
                     }
                 }).catch(reject);
             }else if(queue.length != 0){
