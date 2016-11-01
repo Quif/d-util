@@ -159,7 +159,7 @@ class MusicClient extends EventEmitter {
                 this.timesOut.splice(this.timesOut.indexOf(timeOut));
             }
             if(song){
-                this.addSong(this.getQueue(msg.guild.id), msg.author, song).then(queue => {
+                this.addSong(queue, msg.author, song).then(queue => {
                     if(queue.length == 1){
                         resolve(queue);
                         setTimeout(() => {
