@@ -252,5 +252,21 @@ class MusicClient extends EventEmitter {
        return queue;
    }
    
+   pause(guild){
+       if(!guild) throw new Error("Missing arguments");
+       if(typeof guild == "object") guild = guild.id;
+       if(!this.findDispatcher(guild)) throw new Error("Dispacther not found");
+       let dispatcher = this.getDisaptcher(guild).dispacther;
+       dispatcher.pause();
+   }
+   
+   resume(guild){
+       if(!guild) throw new Error("Missing arguments");
+       if(typeof guild == "object") guild = guild.id;
+       if(!this.findDispatcher(guild)) throw new Error("Dispacther not found");
+       let dispatcher = this.getDisaptcher(guild).dispacther;
+       dispatcher.resume();
+   }
+   
 }
 module.exports = MusicClient;
