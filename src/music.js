@@ -37,6 +37,45 @@ class MusicClient extends EventEmitter {
         this.timesOut = [];
     }
     
+    addDispatcher(guild, dispacther){
+        if(!dispacther || !guild) throw new Error("missing arguments");
+        this.dispatchers.push({
+             "Guild_id": guild,
+             "dispacther": dispacther
+        });
+    }
+    
+    delDispatcher(guild){
+        if(!guild) throw new Error("missing arguments");
+        if(typeof guild == "object") guild = guild.id;
+        let test = this.getDisaptcher(guild);
+        this.dispatchers.splice(this.dispatchers.indexOf(test));
+    }
+    
+    updateDispatcher(guild, dispacther){
+        if(!guild || !dispacther) throw new Error("missing arguments");
+        if(typeof guild == "object") guild = guild.id;
+        this.dispatchers[this.dispatchers.indexOf(this.getDisaptcher(guild))].dispacther = dispacther;
+    }
+    
+    findDispatcher(guild){
+        if(!guild) throw new Error("missing arguments");
+        if(typeof guild == "object") guild = guild.id;
+        let test = this.getDisaptcher(guild);
+        if(test) return true;
+        else return false;
+    }
+    
+    getDisaptcher(guild){
+        if(!guild) throw new Error("missing arguments");
+        if(typeof guild == "object") guild = guild.id;
+        let found;
+        this.dispatchers.forEach(obj => {
+            if(obj.Guild_id == guild) return found = obj;
+        });
+        return found;
+    }
+    
     getTime(time, other){
         if(!time) throw new Error('no time to convert');
         var time = time/1000;
@@ -181,6 +220,8 @@ class MusicClient extends EventEmitter {
                         $this.play(msg, queue);
                     }, $this.options.timeNewSong);
                 });
+                if(!$this.findDispatcher(msg.guild.id)) $this.addDispatcher(msg.guild.id, dispatcher);
+                else $this.updateDispatcher(msg.guild.id, dispatcher);
             }else{
                 if($this.options.autoLeave){
                     let time = setTimeout(() => {
@@ -196,6 +237,17 @@ class MusicClient extends EventEmitter {
                 }
             }
        });
+   }
+   
+   np(guild){
+       if(!guild) throw new Error("Missing arguments");
+       if(typeof guild == "object") guild = guild.id;
+       if(!this.findDispatcher(guild)) throw new Error("Dispacther not found");
+       let dispatcher = this.getDisaptcher(guild).dispacther;
+       let time  = dispatcher.time;
+       let queue = this.getQueue(guild)[0];
+       queue.timeOfPlaying = time;
+       return queue;
    }
    
 }
