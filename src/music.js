@@ -268,5 +268,24 @@ class MusicClient extends EventEmitter {
        dispatcher.resume();
    }
    
+   getVolume(guild){
+       if(!guild) throw new Error("Missing arguments");
+       if(typeof guild == "object") guild = guild.id;
+       if(!this.findDispatcher(guild)) throw new Error("Dispacther not found");
+       let dispatcher = this.getDisaptcher(guild).dispacther;
+       return dispatcher.volume * 50;
+   }
+   
+   setVolume(guild, volume){
+       if(!guild || !volume) throw new Error("Missing arguments");
+       if(volume > 100 || volume < 1) throw new Error("volume can't be higher then 100 and lower then 1");
+       if(!guild) throw new Error("Missing arguments");
+       if(typeof guild == "object") guild = guild.id;
+       if(!this.findDispatcher(guild)) throw new Error("Dispacther not found");
+       let dispatcher = this.getDisaptcher(guild).dispacther;
+       dispatcher.setVolume((volume / 50));
+       return volume;
+   }
+   
 }
 module.exports = MusicClient;
