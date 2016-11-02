@@ -149,10 +149,12 @@ class MusicClient extends EventEmitter {
                 song = (song.includes("https://" || "http://")) ? song : results[0].link;
                 let stream = ytdl(song, {audioonly: true});
                 youtube.getVideo(song).then(logs => {
-                    var duration = "";
-                    for(let x of Object.keys(logs.duration)){
-                        duration += logs.duration[x];
-                        if(x != "secondes") duration += ";";
+                    var duration = '';
+                    for(var x of Object.keys(logs.duration)){
+                        if(logs.duration[x] != 0){
+                            duration += logs.duration[x];
+                            if(x != "seconds") duration += ":"; else duration += '';
+                        }
                     }
                     queue.push({
                         "name": results[0].title,
