@@ -289,8 +289,7 @@ class MusicClient extends EventEmitter {
    }
    
    skipAdd(user, guild, instaSkip){
-       if(!user || !guild) throw new Error("Missing arguments");
-       if(typeof guild == "object") guild = guild.id;
+       if(!user || !guild || !typeof guild == "object") throw new Error("Missing arguments");
        if(typeof user == "object") user = user.id;
        if(!this.findDispatcher(guild)) throw new Error("Dispacther not found");
        let dispatcher = this.getDisaptcher(guild).dispacther;
