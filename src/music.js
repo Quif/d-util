@@ -300,7 +300,7 @@ class MusicClient extends EventEmitter {
        let skipGuild = this.getSkipGuild(guild.id);
        if(!skipGuild) skipGuild = this.skipAddGuild(guild.id);
        if(this.options.skipRequired == "auto"){
-            let users = guild.voiceConnection.channel.members.size() - 1;
+            let users = guild.voiceConnection.channel.members.size - 1;
             if(skipGuild.skipArr.length >= (users / 2)){
                 dispatcher.end();
                 return true;
