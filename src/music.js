@@ -288,5 +288,51 @@ class MusicClient extends EventEmitter {
        return volume;
    }
    
+   skipAdd(user, guild, instaSkip){
+       if(!user || !guild) throw new Error("Missing arguments");
+       if(typeof guild == "object") guild = guild.id;
+       if(typeof user == "object") user = user.id;
+       if(!this.findDispatcher(guild)) throw new Error("Dispacther not found");
+       let dispatcher = this.getDisaptcher(guild).dispacther;
+       if(instaSkip){
+           dispatcher.end();
+           return true;
+       }
+       let skipGuild = this.getSkipGuild(guild);
+       if(!skipGuild) skipGuild = this.skipAddGuild(guild);
+       if(this.options.skipRequired == "auto"){
+            let users = guild.voiceConnection.channel.members.size() - 1;
+            if(skipGuild.skipArr.length >= (users / 2)){
+                dispatcher.end();
+                return true;
+            }
+       }else{
+           if(skipGuild.skipArr.length >= this.options.skipRequired){
+               dispatcher.end();
+               return true;
+           }
+       }
+   }
+   
+   skipAddGuild(guild){
+       if(!guild) throw new Error("Missing arguments");
+       if(typeof guild == "object") guild = guild.id;
+       this.skips.push({
+           "Guild_id": guild,
+           "skipArr": []
+       });
+       return this.skips[this.skips.length - 1];
+   }
+   
+   getSkipGuild(guild){
+       if(!guild) throw new Error("Missing arguments");
+       if(typeof guild == "object") guild = guild.id;
+       let found;
+       this.skips.forEach(obj => {
+           if(obj.Guild_id == guild) return found = obj;
+       });
+       return found;
+   }
+   
 }
 module.exports = MusicClient;
