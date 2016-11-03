@@ -291,14 +291,14 @@ class MusicClient extends EventEmitter {
    skipAdd(user, guild, instaSkip){
        if(!user || !guild || !typeof guild == "object") throw new Error("Missing arguments");
        if(typeof user == "object") user = user.id;
-       if(!this.findDispatcher(guild)) throw new Error("Dispacther not found");
-       let dispatcher = this.getDisaptcher(guild).dispacther;
+       if(!this.findDispatcher(guild.id)) throw new Error("Dispacther not found");
+       let dispatcher = this.getDisaptcher(guild.id).dispacther;
        if(instaSkip){
            dispatcher.end();
            return true;
        }
-       let skipGuild = this.getSkipGuild(guild);
-       if(!skipGuild) skipGuild = this.skipAddGuild(guild);
+       let skipGuild = this.getSkipGuild(guild.id);
+       if(!skipGuild) skipGuild = this.skipAddGuild(guild.id);
        if(this.options.skipRequired == "auto"){
             let users = guild.voiceConnection.channel.members.size() - 1;
             if(skipGuild.skipArr.length >= (users / 2)){
