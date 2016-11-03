@@ -114,6 +114,7 @@ class MusicClient extends EventEmitter {
         this.queues.forEach(obj => {
             if(obj.Guild_id == guild) return found = obj.queue;
         });
+        if(this.findDispatcher(guild)) found[0].timeOfPlaying = this.getDisaptcher(guild).dispacther.time;
         return found;
     }
     
