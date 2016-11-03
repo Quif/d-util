@@ -203,6 +203,7 @@ class MusicClient extends EventEmitter {
             if(song){
                 this.addSong(queue, msg.author, song).then(queue => {
                     if(queue.length == 1){
+                        $this.emit("songAdded", {"song": queue[queue.length - 1], "msg": msg});
                         resolve(queue[(queue.length - 1)]);
                         setTimeout(() => {
                             $this.play(msg, queue);
@@ -212,6 +213,8 @@ class MusicClient extends EventEmitter {
                     }
                 }).catch(reject);
             }else if(queue.length != 0){
+                $this.emit("newSongPlaying", {"msg": msg, "song": queue[0]});
+                $this.skipDelGuild(msg.guild.id);
                 let connection = msg.client.voiceConnections.get(msg.guild.id);
                 if(!connection) return reject("Not connected to a voice channel");
                 let dispatcher = connection.playStream(queue[0].toplay);
@@ -226,6 +229,8 @@ class MusicClient extends EventEmitter {
                 if(!$this.findDispatcher(msg.guild.id)) $this.addDispatcher(msg.guild.id, dispatcher);
                 else $this.updateDispatcher(msg.guild.id, dispatcher);
             }else{
+                $this.emit("queueFinished", {"msg": msg})
+                $this.delDispatcher(msg.guild.id);
                 if($this.options.autoLeave){
                     let time = setTimeout(() => {
                         let channel = msg.client.voiceConnections.get(msg.guild.id);
@@ -259,6 +264,7 @@ class MusicClient extends EventEmitter {
        if(!this.findDispatcher(guild)) throw new Error("Dispacther not found");
        let dispatcher = this.getDisaptcher(guild).dispacther;
        dispatcher.pause();
+       this.emit("songPaused", guild);
    }
    
    resume(guild){
@@ -267,6 +273,7 @@ class MusicClient extends EventEmitter {
        if(!this.findDispatcher(guild)) throw new Error("Dispacther not found");
        let dispatcher = this.getDisaptcher(guild).dispacther;
        dispatcher.resume();
+       this.emit("songResumed", guild);
    }
    
    getVolume(guild){
@@ -285,6 +292,7 @@ class MusicClient extends EventEmitter {
        if(!this.findDispatcher(guild)) throw new Error("Dispacther not found");
        let dispatcher = this.getDisaptcher(guild).dispacther;
        dispatcher.setVolume((volume / 50));
+       this.emit("volumeChanged", {"guild": guild, "volume": volume});
        return volume;
    }
    
@@ -295,22 +303,49 @@ class MusicClient extends EventEmitter {
        let dispatcher = this.getDisaptcher(guild.id).dispacther;
        if(instaSkip){
            dispatcher.end();
+           this.emit("songSkiped", {"user": user, "guild": guild});
            return true;
        }
        let skipGuild = this.getSkipGuild(guild.id);
        if(!skipGuild) skipGuild = this.skipAddGuild(guild.id);
+       skipGuild.skipArr.push(user);
+       console.log(skipGuild);
        if(this.options.skipRequired == "auto"){
             let users = guild.voiceConnection.channel.members.size - 1;
             if(skipGuild.skipArr.length >= (users / 2)){
                 dispatcher.end();
+                this.emit("songSkiped", {"user": user, "guild": guild});
                 return true;
             }
        }else{
            if(skipGuild.skipArr.length >= this.options.skipRequired){
                dispatcher.end();
+               this.emit("songSkiped", {"user": user, "guild": guild});
                return true;
            }
        }
+       return skipGuild.skipArr;
+   }
+   
+   skipDel(user, guild){
+       if(!user || !guild || !typeof guild == "object") throw new Error("Missing arguments");
+       if(typeof user == "object") user = user.id;
+       if(typeof guild == "object") guild = guild.id;
+       let skipGuild = this.getSkipGuild(guild);
+       skipGuild.skipArr.splice(skipGuild.skipArr.indexOf(user));
+   }
+   
+   skipFind(user, guild){
+       if(!user || !guild) throw new Error("Missing arguments");
+       if(typeof user == "object") user = user.id;
+       if(typeof guild == "object") guild = guild.id;
+       let skipGuild = this.getSkipGuild(guild);
+       if(!skipGuild) return false;
+       let found;
+       skipGuild.skipArr.forEach(ids => {
+           if(ids == user)return found = true;
+       });
+       return found;
    }
    
    skipAddGuild(guild){
@@ -321,6 +356,15 @@ class MusicClient extends EventEmitter {
            "skipArr": []
        });
        return this.skips[this.skips.length - 1];
+   }
+   
+   skipDelGuild(guild){
+       if(!guild) throw new Error("Missing arguments");
+       if(typeof guild == "object") guild = guild.id;
+       let skipGuild = this.getSkipGuild(guild);
+       if(skipGuild){
+           skipGuild.skipArr = [];
+       }
    }
    
    getSkipGuild(guild){
